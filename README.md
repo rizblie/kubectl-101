@@ -57,6 +57,29 @@ kubectl get pods -A --field-selector spec.nodeName=<node>
 
 Run a NGINX server using:
 ```
+kubectl run nginx --image=nginx
+```
+
+You should see:
+```
+pod/nginx created
+```
+
+Get a summary of your pod status
+```
+kubectl get pod nginx
+```
+
+Add `-o wide` to see which node it has been scheduled on:
+```
+kubectl get pod nginx -o wide
+```
+
+
+## Namescpaces
+
+Run a NGINX server using:
+```
 kubectl run nginx --image=nginx -n mynamespace
 ```
 
