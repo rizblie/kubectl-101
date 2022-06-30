@@ -17,6 +17,11 @@ ip-192-168-79-95.eu-central-1.compute.internal    Ready    <none>   8d    v1.21.
 ```
 **Note**: If you are using Amazon EKS, you will only see details for your worker nodes. If you are running standard (self-managed) Kubernetes then you will see both workewr nodes and control plane nodes.
 
+To get a bit more info about nodes, try:
+```
+kubectl get nodes -o wide
+```
+
 To get detailed info about a specific node, use:
 ```
 kubectl get node <node-name> -o yaml
@@ -40,3 +45,21 @@ kube-system        kube-proxy-cf8bn                               1/1     Runnin
 kube-system        kube-proxy-rjvlb                               1/1     Running   0          8d
 kube-system        kube-proxy-z9z99                               1/1     Running   0          8d
 ```
+
+You can see that all these pods are running in the namespace `kube-system`. In the next section you will see how you can use namespaces to segment your cluster for management purposes.
+
+To see pods running on a specifc node:
+```
+kubectl get pods -A --field-selector spec.nodeName=<node>
+```
+
+## Starting a new pod
+
+Run a NGINX server using:
+```
+kubectl run nginx --image=nginx -n mynamespace
+```
+
+## Other things to try
+
+Check out the [kubectl cheat sheet](https://kubernetes.io/docs/reference/kubectl/cheatsheet/#kubectl-autocomplete)
