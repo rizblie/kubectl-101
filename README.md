@@ -1,6 +1,8 @@
 # kubectl-101
 
-## Explore your cluster
+## kubectl basics
+
+### Explore your cluster
 
 To see the nodes that make up your cluster, use:
 
@@ -53,7 +55,7 @@ To see pods running on a specifc node:
 kubectl get pods -A --field-selector spec.nodeName=<node>
 ```
 
-## Starting a new pod
+### Starting a new pod
 
 Run a NGINX server using:
 ```
@@ -96,20 +98,60 @@ To delete the pod:
 kubectl delete pod nginx
 ```
 
-## Run pod using Amazon ECR public registry
+### Run pod using Amazon ECR public registry
+
+By default, images are pulled from the public [Docker Hub](https://hub.docker.com/) registry. Note that there are limits in place on the number
+of image pulls:
+- For anonymous users, the rate limit is set to 100 pulls per 6 hours per IP address.
+- For authenticated users, it is 200 pulls per 6 hour period.
+
+You can use alternate public registries, or your own private registry, by specifying the full path name to the image. For example:
 
 ```
 kubectl run nginx --image=public.ecr.aws/nginx/nginx:1-alpine-perl
 ```
 
+Check out the ECR gallery at https://gallery.ecr.aws/.
 
-## Namescpaces
+### Namespaces
 
-Run a NGINX server using:
+You can use namespaces to segment your cluster. In the earlier example, you created a pod in the `default` namespace.
+
+To list namespaces use:
 ```
-kubectl run nginx --image=nginx -n mynamespace
+kubectl get namespaces
 ```
 
-## Other things to try
+To list pods in the `kube-system` namespace, use:
+```
+kubectl get pods -n kube-system
+```
+
+To create your own namespace, use:
+```
+kubectl create namespace my-namespace
+```
+
+Run an NGINX server pod in your namespace using:
+```
+kubectl run nginx --image=nginx -n my-namespace
+```
+
+Try:
+```
+kubectl get pods -A
+```
+to see all pods across all namespaces, and you should see your pod in your namespace.
+
+To delete the pod, use:
+```
+kubectl delete pod nginx -n my-namespace
+```
+
+## Using manifest files
+
+
+
+### Other things to try
 
 Check out the [kubectl cheat sheet](https://kubernetes.io/docs/reference/kubectl/cheatsheet/#kubectl-autocomplete)
