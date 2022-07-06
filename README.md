@@ -108,7 +108,7 @@ of image pulls:
 You can use alternate public registries, or your own private registry, by specifying the full path name to the image. For example:
 
 ```
-kubectl run nginx --image=public.ecr.aws/nginx/nginx:1-alpine-perl
+kubectl run nginx --image=public.ecr.aws/docker/library/nginx:stable-perl
 ```
 
 Check out the ECR gallery at https://gallery.ecr.aws/.
@@ -134,7 +134,7 @@ kubectl create namespace my-namespace
 
 Run an NGINX server pod in your namespace using:
 ```
-kubectl run nginx --image=nginx -n my-namespace
+kubectl run nginx --image=public.ecr.aws/docker/library/nginx:stable-perl -n my-namespace
 ```
 
 Try:
@@ -148,10 +148,143 @@ To delete the pod, use:
 kubectl delete pod nginx -n my-namespace
 ```
 
-## Using manifest files
+To delete the namespace, use:
+```
+kubectl delete namespace my-namespace
+```
+
+### Using manifest files
+
+While it is possible to create and manage resources directly from the command line, this starts to become impractical for more complex configurations at scale.
+
+Kubernetes object configurations are typically captured using a manifest file containing one or more YAML documents.
+These files can be stored in a git repo and under version control, just like application code.
+
+Let's reproduce the previous exmample using a manifest file. Create a file `nginx.yaml` with the following contents:
+```
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: my-namespace
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: nginx
+  namespace: my-namespace
+spec:
+  containers:
+  - image: public.ecr.aws/docker/library/nginx:stable-perl
+    name: nginx
+```
+
+Apply the manifest using:
+```
+kubectl apply -f nginx.yaml 
+```
+
+This will create a namespace and pod. Try applying the manifest again, and see what happens.
+
+To delete the pod and namespace, use:
+```
+kubectl delete -f nginx.yaml
+```
+
+## ReplicaSets and Deployments
+
+When running services at scale, it is often necessary to run multiple copies of a pod to enable horizontal scaling. Further, mechanisms are needed
+to ensure that the number of pods can be adjusted as needed, and to support the deployment of new versions.
+
+### Creating a ReplicaSet
+
+Kubernetes uses ReplicaSets to maintain a specified number of replicas of a pod.
+
+Create the following manifest in a file `frontend-rs.yaml`
+```
+apiVersion: apps/v1
+kind: ReplicaSet
+metadata:
+  name: frontend
+  labels:
+    tier: frontend
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      tier: frontend
+  template:
+    metadata:
+      labels:
+        tier: frontend
+    spec:
+      containers:
+      - name: nginx
+        image: public.ecr.aws/docker/library/nginx:stable-perl
+```
+
+Apply the file, using:
+```
+kubectl apply -f frontend-rs.yaml
+```
+and immediately follow with:
+```
+kubectl get pods
+```
+
+You should see three pods being created
+```
+NAME             READY   STATUS              RESTARTS   AGE
+frontend-72hhc   0/1     ContainerCreating   0          6s
+frontend-bzqwg   0/1     ContainerCreating   0          6s
+frontend-zzjgd   0/1     ContainerCreating   0          6s
+```
+Note that pods have been named automatically to ensure they all receive a unique name.
+
+Check the status again a few seconds later, and you should see all pods in the `Running` state. You can also use the `-o wide` option to
+see which nodes the pods have been placed on.
+
+You can also check the status of the ReplicaSet itself:
+```
+kubectl get replicaset frontend
+```
+and you should see:
+```
+NAME       DESIRED   CURRENT   READY   AGE
+frontend   3         3         3       3m32s
+```
+Try adding `-o wide` for more info, and `-o yaml` for even more info.
+
+### Scaling pods using a ReplicaSet
+
+Suppose you now needed to scale out your service to 5 pods.
+
+To do this, edit the manifest `frontend-rs.yaml` and change the `replicas` attribute from
+3 to 5. Apply the manifest again and check the pod status. You should now see five pods!
+
+```
+NAME             READY   STATUS    RESTARTS   AGE
+frontend-5pjw2   1/1     Running   0          5s
+frontend-72hhc   1/1     Running   0          9m24s
+frontend-9z75w   1/1     Running   0          5s
+frontend-bzqwg   1/1     Running   0          9m24s
+frontend-zzjgd   1/1     Running   0          9m24s
+```
+Notice how the age of the 2 newer pods is much lower than the pre-existing pods.
+
+Try scaling in to 4 pods by editing the manifest and applying it again. You should see one of your pods disappear.
+
+### Replacing failed pods using a ReplicaSet
+
+A ReplicaSet will ensure that the desired number of pods is kept running. To see this, you can simulate a pod failure by deleting a pod.
+Pick any of the pods created by the ReplicaSet and delete it. For example (please replace pod name as required):
+```
+kubectl delete pod frontend-bzqwg
+```
+Check your pods again and you will see that the ReplicaSet has created a new Pod to replace the one you just deleted (look for a pod with a low Age).
 
 
 
-### Other things to try
+
+## Other things to try
 
 Check out the [kubectl cheat sheet](https://kubernetes.io/docs/reference/kubectl/cheatsheet/#kubectl-autocomplete)
