@@ -48,7 +48,7 @@ kube-system        kube-proxy-rjvlb                               1/1     Runnin
 kube-system        kube-proxy-z9z99                               1/1     Running   0          8d
 ```
 
-You can see that all these pods are running in the namespace `kube-system`. In the next section you will see how you can use namespaces to segment your cluster for management purposes.
+You can see that all these pods are running in the namespace `kube-system`. In a later section, you will see how you can use namespaces to segment your cluster for management purposes.
 
 To see pods running on a specifc node:
 ```
@@ -282,8 +282,112 @@ kubectl delete pod frontend-bzqwg
 ```
 Check your pods again and you will see that the ReplicaSet has created a new Pod to replace the one you just deleted (look for a pod with a low Age).
 
+## Exposing pods as services
 
+All pods get their own internal IP address, but if you want to use a group of pods (as might be created by a ReplicaSet) to work as one service then
+you need a single service endpoint along with some mechanism for distributing load across the pods that make up the service.
 
+Kubernetes offers a number of ways to expose a service:
+- ClusterIP: Kubernetes assignes the service an innternal load-balanced IP address. Just like pods, the The IP address that is used for the ClusterIP is not routable outside of the cluster.
+- NodePort: The service is exposed on a port (in the range 30000-32767 by default) on every node in the cluster. Any node IP address can then be used to access the service.
+- LoadBalancer: Exposes the service via a load balancer, such as an AWS NLB.
+
+### Creating a ClusterIP service
+
+To expose our NGINX pods as a ClusterIP service, create the manifest file `frontend-svc.yaml`:
+```
+apiVersion: v1
+kind: Service
+metadata:
+  name: frontend-service
+spec:
+  type: ClusterIP
+  selector:
+    tier: frontend
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 80
+```
+Note how the `selector` is used to include all pods that have the label `tier: frontend` as part of the service.
+
+Apply the manifest in the usual way. Then, verify that the service has been created, using:
+```
+kubectl get svc frontend-service
+```
+Note the assigned Cluster IP address.
+
+To test the service, you can use port forwarding as done previously, but this time to a service instead of a pod. Run
+```
+kubectl port-forward svc/frontend-service 8080:80
+```
+and then use a different terminal to run `curl 127.0.0.1:8080`. Don't forget to Ctrl-C the forwarding process when done!
+
+Alternatively you can test by running an interactive client pod inside the cluster.
+You can use the `busybox` image to run an interactive pod for this purpose as follows:
+```
+kubectl run busybox -it --image=public.ecr.aws/docker/library/busybox --rm --restart=Never
+```
+`busybox` is a minimalist version of Linux that is convenient for running tests inside a cluster. From the busybox command prompt type:
+```
+wget -O - 10.100.92.62
+```
+to verify that you can retrieve a page from NGINX.
+
+Once done type `exit` to leave the busybox pod. Use of the `--rm` flag in the run command automaticaly deletes the pod upon completion.
+
+## NodePort
+
+Let's change the service type to NodePort. Edit `frontend-svc.yaml` and change the service `Type` to `NodePort` so that the file now looks like this:
+```
+apiVersion: v1
+kind: Service
+metadata:
+  name: frontend-service
+spec:
+  type: NodePort
+  selector:
+    tier: frontend
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 80
+```
+
+Use
+```
+kubectl apply -f frontend-svc.yaml
+```
+to apply the change.
+
+Run
+```
+kubectl get svc frontend-service
+```
+You shuold see:
+```
+NAME               TYPE       CLUSTER-IP     EXTERNAL-IP   PORT(S)        AGE
+frontend-service   NodePort   10.100.92.62   <none>        80:30142/TCP   37m
+```
+You can see that the service still has a cluster IP, but has now also been assigned a node port in the range 30000-32767 (in this case 30142).
+
+Again you can use busybox to test this. Let us use a slightly different approach. Run a busybox server using:
+```
+kubectl run busybox --image=public.ecr.aws/docker/library/busybox -- sleep 3600
+```
+You can now run commandson your busybox server using the `exec` command. For example:
+```
+kubectl exec busybox -- date
+```
+runs the `date` command on busybox and returns.
+
+To test the NodePort service, use `kubectl get nodes` to identify a node IP address, then run
+```
+kubectl exec busybox -- wget -O - <node-ip>:<node-port>/
+```
+where <node-IP> is a node IP address, and <node-port> is the service node port identified above.
+
+Once you have finished testing you can kill your busybox server pod in the usual way.
 
 ## Other things to try
 
