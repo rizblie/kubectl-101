@@ -190,10 +190,10 @@ To delete the pod and namespace, use:
 kubectl delete -f nginx.yaml
 ```
 
-## ReplicaSets and Deployments
+## ReplicaSets
 
 When running services at scale, it is often necessary to run multiple copies of a pod to enable horizontal scaling. Further, mechanisms are needed
-to ensure that the number of pods can be adjusted as needed, and to support the deployment of new versions.
+to ensure that the number of pods can be adjusted as needed.
 
 ### Creating a ReplicaSet
 
@@ -288,9 +288,9 @@ All pods get their own internal IP address, but if you want to use a group of po
 you need a single service endpoint along with some mechanism for distributing load across the pods that make up the service.
 
 Kubernetes offers a number of ways to expose a service:
-- ClusterIP: Kubernetes assignes the service an innternal load-balanced IP address. Just like pods, the The IP address that is used for the ClusterIP is not routable outside of the cluster.
-- NodePort: The service is exposed on a port (in the range 30000-32767 by default) on every node in the cluster. Any node IP address can then be used to access the service.
-- LoadBalancer: Exposes the service via a load balancer, such as an AWS NLB.
+- ClusterIP: Kubernetes assigns the service an innternal load-balanced IP address. Just like pods, the The IP address that is used for the ClusterIP is not routable outside of the cluster.
+- NodePort: The service gets a ClusterIP address, and is additionally exposed on a port (in the range 30000-32767 by default) on every node in the cluster. Any node IP address can then be used to access the service.
+- LoadBalancer: Creates a NodePort service and then exposes the service node ports using a load balancer, such as an AWS NLB.
 
 ### Creating a ClusterIP service
 
@@ -313,7 +313,7 @@ Note how the `selector` is used to include all pods that have the label `tier: f
 
 Apply the manifest in the usual way. Then, verify that the service has been created, using:
 ```
-kubectl get svc frontend-service
+kubectl get service frontend-service
 ```
 Note the assigned Cluster IP address.
 
@@ -336,7 +336,7 @@ to verify that you can retrieve a page from NGINX.
 
 Once done type `exit` to leave the busybox pod. Use of the `--rm` flag in the run command automaticaly deletes the pod upon completion.
 
-## NodePort
+### Creating a NodePort service
 
 Let's change the service type to NodePort. Edit `frontend-svc.yaml` and change the service `Type` to `NodePort` so that the file now looks like this:
 ```
@@ -362,7 +362,7 @@ to apply the change.
 
 Run
 ```
-kubectl get svc frontend-service
+kubectl get service frontend-service
 ```
 You shuold see:
 ```
@@ -389,6 +389,40 @@ where <node-IP> is a node IP address, and <node-port> is the service node port i
 
 Once you have finished testing you can kill your busybox server pod in the usual way.
 
-## Other things to try
+### Creating a LoadBalancer service
+Let's change the service type to LoadBalancer. Edit `frontend-svc.yaml` and change the service `Type` to `LoadBalancer` so that the file now looks like this:
+```
+apiVersion: v1
+kind: Service
+metadata:
+  name: frontend-service
+spec:
+  type: LoadBalancer
+  selector:
+    tier: frontend
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 80
+```
+Apply the manifest in the usual way, then run:
+```
+kubectl get service frontend-service
+```
+You should see the `EXTERNAL-IP` value populated with the URI for an AWS load balancer. Copy and paste this into a browser to test your service. Note that you might need to wait for a few minutes for DNS to propagate.
+  
+### Clean up resources
+  
+Once tested you can delete the service and replica set using:
+```
+kubectl delete -f frontend-svc.yaml
+kubectl delete -f frontend-rs.yaml
+```
 
-Check out the [kubectl cheat sheet](https://kubernetes.io/docs/reference/kubectl/cheatsheet/#kubectl-autocomplete)
+## Further reading, and other things to try
+  
+Browse the kubernetes [documnentation](https://kubernetes.io/docs/home/). Specifically, have a look at:
+- [Pos lifecycle](https://kubernetes.io/docs/concepts/workloads/pods/pod-lifecycle/)
+- [Deployments](https://kubernetes.io/docs/concepts/workloads/controllers/deployment/)
+- [Ingress](https://kubernetes.io/docs/concepts/services-networking/ingress/)
+- [kubectl cheat sheet](https://kubernetes.io/docs/reference/kubectl/cheatsheet/#kubectl-autocomplete)
