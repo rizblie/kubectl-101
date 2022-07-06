@@ -1,6 +1,6 @@
 # kubectl-101
 
-## kubectl basics
+## Basics
 
 ### Explore your cluster
 
@@ -92,6 +92,11 @@ curl 127.0.0.1:8080/
 to connect to the NGINX server running in the pod.
 
 When done, return to the terminal where `port-forward` is running and hit *Ctrl-C* to stop forwarding.
+
+To view the pod's container logs:
+```
+kubectl logs nginx
+```
 
 To delete the pod:
 ```
