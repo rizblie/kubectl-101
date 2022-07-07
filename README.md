@@ -333,6 +333,8 @@ kubectl port-forward svc/frontend-service 8080:80
 ```
 and then use a different terminal to run `curl 127.0.0.1:8080`. Don't forget to Ctrl-C the forwarding process when done!
 
+**Exercise:** Can you figure out which of the pods that sit behind the service actually handled your test request?
+
 Alternatively you can test by running an interactive client pod inside the cluster.
 You can use the `busybox` image to run an interactive pod for this purpose as follows:
 ```
