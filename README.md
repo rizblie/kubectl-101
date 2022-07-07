@@ -168,7 +168,7 @@ While it is possible to create and manage resources directly from the command li
 Kubernetes object configurations are typically captured using a manifest file containing one or more YAML documents.
 These files can be stored in a git repo and under version control, just like application code.
 
-Let's reproduce the previous exmample using a manifest file. Create a file `nginx.yaml` with the following contents:
+Let's reproduce the previous example using a manifest file. Create a file `nginx.yaml` with the following contents:
 ```
 apiVersion: v1
 kind: Namespace
@@ -191,7 +191,9 @@ Apply the manifest using:
 kubectl apply -f nginx.yaml 
 ```
 
-This will create a namespace and pod. Try applying the manifest again, and see what happens.
+This will create a namespace and pod. Verify this using `kubectl get pods -n my-namespace`.
+
+Now try applying the manifest again, and see what happens.
 
 To delete the pod and namespace, use:
 ```
