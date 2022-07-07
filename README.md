@@ -117,6 +117,7 @@ You can use alternate public registries, or your own private registry, by specif
 ```
 kubectl run nginx --image=public.ecr.aws/docker/library/nginx:stable-perl
 ```
+Once you have tried this, you can delete this pod in the usual way with `kubectl delete pod nginx`.
 
 Check out the ECR gallery at https://gallery.ecr.aws/.
 
