@@ -422,7 +422,7 @@ Apply the manifest in the usual way, then run:
 ```
 kubectl get service frontend-service
 ```
-You should see the `EXTERNAL-IP` value populated with the URI for an AWS load balancer. Copy and paste this into a browser to test your service. Note that you might need to wait for a few minutes for DNS to propagate.
+You should see the `EXTERNAL-IP` value populated with the URI for an AWS load balancer. Copy and paste this into a browser to test your service. Note that you will need to wait for a few minutes for DNS to propagate.
   
 ### Clean up resources
   
