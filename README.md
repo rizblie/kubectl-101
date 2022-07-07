@@ -88,15 +88,17 @@ This will forward all traffic to port 8080 on the local host to port 80 in the n
 Open another terminal window and use
 ```
 curl 127.0.0.1:8080/
-```
-to connect to the NGINX server running in the pod.
+``
+to connect to the NGINX server running in the pod. Verfify that you can see the HTML output of the root page.
 
-When done, return to the terminal where `port-forward` is running and hit *Ctrl-C* to stop forwarding.
-
-To view the pod's container logs:
+You can also view the container's log to verify that your HTTP request was received. To view the pod's container logs, use:
 ```
 kubectl logs nginx
 ```
+Run the `curl` command aboce a few more times to generate some more HTTP requests, and then check the logs to verify that you can see the requests.
+
+When done, return to the terminal where `port-forward` is running and hit *Ctrl-C* to stop forwarding.
+
 
 To delete the pod:
 ```
