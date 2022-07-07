@@ -342,9 +342,10 @@ kubectl run busybox -it --image=public.ecr.aws/docker/library/busybox --rm --res
 ```
 `busybox` is a minimalist version of Linux that is convenient for running tests inside a cluster. From the busybox command prompt type:
 ```
-wget -O - 10.100.92.62
+wget -O - <cluster-ip>
 ```
 to verify that you can retrieve a page from NGINX.
+Note: Use the clusterIP address that you observed when you ran `kubectl get service frontend-service` earlier.
 
 Once done type `exit` to leave the busybox pod. Use of the `--rm` flag in the run command automaticaly deletes the pod upon completion.
 
