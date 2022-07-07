@@ -88,7 +88,7 @@ This will forward all traffic to port 8080 on the local host to port 80 in the n
 Open another terminal window and use
 ```
 curl 127.0.0.1:8080/
-``
+```
 to connect to the NGINX server running in the pod. Verfify that you can see the HTML output of the root page.
 
 You can also view the container's log to verify that your HTTP request was received. To view the pod's container logs, use:
