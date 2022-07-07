@@ -17,7 +17,7 @@ ip-192-168-11-255.eu-central-1.compute.internal   Ready    <none>   8d    v1.21.
 ip-192-168-51-107.eu-central-1.compute.internal   Ready    <none>   8d    v1.21.12-eks-5308cf7
 ip-192-168-79-95.eu-central-1.compute.internal    Ready    <none>   8d    v1.21.12-eks-5308cf7
 ```
-**Note**: If you are using Amazon EKS, you will only see details for your worker nodes. If you are running standard (self-managed) Kubernetes then you will see both workewr nodes and control plane nodes.
+**Note**: If you are using Amazon EKS, you will only see details for your worker nodes. If you are running standard (self-managed) Kubernetes then you will see both worker nodes and control plane nodes.
 
 To get a bit more info about nodes, try:
 ```
