@@ -434,8 +434,8 @@ kubectl delete -f frontend-rs.yaml
 
 ## Further reading, and other things to try
   
-Browse the kubernetes [documnentation](https://kubernetes.io/docs/home/). Specifically, have a look at:
-- [Pos lifecycle](https://kubernetes.io/docs/concepts/workloads/pods/pod-lifecycle/)
+Browse the kubernetes [documentation](https://kubernetes.io/docs/home/). Specifically, have a look at:
+- [Pods lifecycle](https://kubernetes.io/docs/concepts/workloads/pods/pod-lifecycle/)
 - [Deployments](https://kubernetes.io/docs/concepts/workloads/controllers/deployment/)
 - [Ingress](https://kubernetes.io/docs/concepts/services-networking/ingress/)
 - [kubectl cheat sheet](https://kubernetes.io/docs/reference/kubectl/cheatsheet/#kubectl-autocomplete)
