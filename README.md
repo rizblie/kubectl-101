@@ -398,7 +398,7 @@ To test the NodePort service, use `kubectl get nodes` to identify a node IP addr
 ```
 kubectl exec busybox -- wget -O - <node-ip>:<node-port>/
 ```
-where <node-IP> is a node IP address, and <node-port> is the service node port identified above.
+where `<node-ip>` is a node IP address, and `<node-port>` is the service node port identified above.
 
 Once you have finished testing you can kill your busybox server pod in the usual way.
 
