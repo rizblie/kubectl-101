@@ -399,7 +399,10 @@ kubectl exec busybox -- wget -O - <node-ip>:<node-port>/
 ```
 where `<node-ip>` is a node IP address, and `<node-port>` is the service node port identified above.
 
-Once you have finished testing you can kill your busybox server pod in the usual way.
+Once you have finished testing you can kill your busybox server pod using:
+```
+kubectl delete pod busybox
+```
 
 ### Creating a LoadBalancer service
 Let's change the service type to LoadBalancer. Edit `frontend-svc.yaml` and change the service `Type` to `LoadBalancer` so that the file now looks like this:
