@@ -111,7 +111,7 @@ of image pulls:
 - For anonymous users, the rate limit is set to 100 pulls per 6 hours per IP address.
 - For authenticated users, it is 200 pulls per 6 hour period.
 
-You can use alternate public registries, or your own private registry, by specifying the full path name to the image. For example:
+You can use alternate public registries, or your own private registry, by specifying the full path name to the image. For example, to use the Amazon ECR public registry:
 
 ```
 kubectl run nginx --image=public.ecr.aws/docker/library/nginx:stable-perl
