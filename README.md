@@ -376,7 +376,7 @@ Run
 ```
 kubectl get service frontend-service
 ```
-You shuold see:
+You should see:
 ```
 NAME               TYPE       CLUSTER-IP     EXTERNAL-IP   PORT(S)        AGE
 frontend-service   NodePort   10.100.92.62   <none>        80:30142/TCP   37m
