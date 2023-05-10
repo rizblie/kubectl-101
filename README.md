@@ -48,12 +48,13 @@ kube-system        kube-proxy-rjvlb                               1/1     Runnin
 kube-system        kube-proxy-z9z99                               1/1     Running   0          8d
 ```
 
-You can see that all these pods are running in the namespace `kube-system`. In a later section, you will see how you can use namespaces to segment your cluster for management purposes.
+You can see that some pods are running in the namespace `kube-system`. Depending on your setup, you may have additional pods running in different namespaces. In a later section, you will see how you can use namespaces to segment your cluster for management purposes.
 
-To see pods running on a specifc node:
+To see pods running on a specific node:
 ```
 kubectl get pods -A --field-selector spec.nodeName=<node>
 ```
+where the `nodeName` is one of the nodes you listed previously.
 
 ### Starting a new pod
 
