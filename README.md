@@ -78,27 +78,25 @@ Add `-o wide` to see which node it has been scheduled on:
 kubectl get pod nginx -o wide
 ```
 
-Verify that the NGINX server is running:
-
-Run
+To verify that the NGINX server is running correctly, use:
 ```
 kubectl port-forward nginx 8080:80
 ```
 This will forward all traffic to port 8080 on the local host to port 80 in the nginx pod. Note this command blocks until you want to stop forwarding.
 
-Open another terminal window and use
+Open another terminal window and use:
 ```
 curl 127.0.0.1:8080/
 ```
-to connect to the NGINX server running in the pod. Verfify that you can see the HTML output of the root page.
+to connect to the NGINX server running in the pod. Verify that you can see the HTML output of the root page.
 
 You can also view the container's log to verify that your HTTP request was received. To view the pod's container logs, use:
 ```
 kubectl logs nginx
 ```
-Run the `curl` command aboce a few more times to generate some more HTTP requests, and then check the logs to verify that you can see the requests.
+Run the `curl` command above a few more times to generate some more HTTP requests, and then check the logs to verify that you can see the requests.
 
-When done, return to the terminal where `port-forward` is running and hit *Ctrl-C* to stop forwarding.
+When done, return to the original terminal where `port-forward` is running and hit *Ctrl-C* to stop forwarding.
 
 
 To delete the pod:
