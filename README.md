@@ -387,7 +387,7 @@ Again you can use busybox to test this. Let us use a slightly different approach
 ```
 kubectl run busybox --image=public.ecr.aws/docker/library/busybox -- sleep 3600
 ```
-You can now run commandson your busybox server using the `exec` command. For example:
+This runs a `busybox` server pod for 3600 seconds before exiting. You can now run commands on your busybox server using the `kubectl exec` command. For example:
 ```
 kubectl exec busybox -- date
 ```
